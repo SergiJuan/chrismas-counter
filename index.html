@@ -21,7 +21,8 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            overflow-x: hidden;
+            overflow: hidden; /* Elimina scrollbars */
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%23f59e0b" d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15.5 5.5L13.5 4L11.7 4.7L10.3 5.3L7 7V9L10 10.5V13L8.5 14.5L9.5 16.5L11 15.5V18.5L10.5 20L12 21L13.5 20L13 18.5V15.5L14.5 16.5L15.5 14.5L14 13V10.5L21 9Z"/></svg>'), auto;
         }
         
         .snowflake {
@@ -31,11 +32,46 @@
             user-select: none;
             z-index: -1;
             animation: fall linear forwards;
+            pointer-events: none;
         }
         
         @keyframes fall {
             to {
-                transform: translateY(105vh);
+                transform: translateY(100vh);
+            }
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f59e0b;
+            opacity: 0.8;
+            border-radius: 50%;
+            animation: confetti-fall linear forwards;
+            pointer-events: none;
+        }
+        
+        .confetti:nth-child(odd) {
+            background-color: #ef4444;
+        }
+        
+        .confetti:nth-child(3n) {
+            background-color: #10b981;
+        }
+        
+        .confetti:nth-child(4n) {
+            background-color: #3b82f6;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
             }
         }
         
@@ -49,6 +85,7 @@
             border-radius: 16px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.08);
+            z-index: 1;
         }
         
         h1 {
@@ -195,7 +232,6 @@
             </div>
         </div>
         
-        
     </div>
 
     <script>
@@ -260,6 +296,46 @@
         // Actualizar el contador cada segundo
         setInterval(updateCountdown, 1000);
         updateCountdown(); // Llamar una vez al cargar la página
+        
+        // Función para crear confeti al hacer clic
+        function createConfetti(e) {
+            const colors = ['#f59e0b', '#ef4444', '#10b981', '#3b82f6'];
+            
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                // Posición en el punto de clic
+                confetti.style.left = e.clientX + 'px';
+                confetti.style.top = e.clientY + 'px';
+                
+                // Color aleatorio
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // Tamaño aleatorio
+                const size = Math.random() * 10 + 5;
+                confetti.style.width = size + 'px';
+                confetti.style.height = size + 'px';
+                
+                // Animación con parámetros aleatorios
+                const duration = Math.random() * 3 + 2;
+                confetti.style.animationDuration = duration + 's';
+                
+                // Dirección aleatoria
+                const directionX = (Math.random() - 0.5) * 200;
+                confetti.style.setProperty('--directionX', directionX + 'px');
+                
+                document.body.appendChild(confetti);
+                
+                // Eliminar el confeti después de que termine la animación
+                setTimeout(() => {
+                    confetti.remove();
+                }, duration * 1000);
+            }
+        }
+        
+        // Agregar evento de clic al documento
+        document.addEventListener('click', createConfetti);
     </script>
 </body>
 </html>
